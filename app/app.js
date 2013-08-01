@@ -1,8 +1,3 @@
-/*
-Module dependencies.
-*/
-
-
 (function() {
   var app, express, http, path, routes, user;
 
