@@ -25,6 +25,7 @@ googlePage = (dir, store, config) ->
   app.configure 'development', ->
     edt = require 'express-debug'
     edt app, { depth: 10 }
+    app.use express.errorHandler()
 
   passport.use(new GoogleStrategy {
     returnURL: app.get("base_url")+"/auth/return"
@@ -48,7 +49,7 @@ googlePage = (dir, store, config) ->
     res.redirect '/login'
 
   csrf = (req, res, next) ->
-    res.locals_csrf = req.session._csfr
+    res.locals.token = req.session._csrf
     next()
 
   app.use express.favicon()
@@ -66,13 +67,11 @@ googlePage = (dir, store, config) ->
   app.use passport.session()
   app.use app.router
   app.use express.static(path.join(__dirname, "..", "public"))
-  app.use express.errorHandler() if "development" is app.get("env")
 
   app.get "/", csrf, (req,res) ->
     res.render "index",
       title: "Express"
       is_auth: req.isAuthenticated()
-      token: req.session._csrf
 
   app.get "/login", passport.authenticate('google'), (req, res) ->
     res.redirect '/'
@@ -89,7 +88,7 @@ googlePage = (dir, store, config) ->
     res.redirect '/'
 
   app.get /(^\/.+$)/, ensureAuthenticated, (req, res) ->
-    res.sendfile dir + req.params[0]
+    res.sendfile path.join(dir, req.params[0])
 
   return app
 
