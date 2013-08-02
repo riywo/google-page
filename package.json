@@ -2,12 +2,30 @@
   "name": "google-page",
   "description": "Authenticated web server with Google OpenID",
   "version": "0.0.1",
+  "main": "./lib/google-page.js",
   "scripts": {
-    "start": "cd private && ../bin/google-page -c ../config.toml"
+    "start": "./bin/google-page -c config.toml -d private"
   },
   "bin": {
     "google-page": "./bin/google-page"
   },
+  "preferGlobal": "true",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/riywo/google-page.git"
+  },
+  "keywords": [
+    "cli",
+    "command",
+    "openid",
+    "google"
+  ],
+  "author": {
+    "name": "Ryosuke IWANAGA",
+    "email": "riywo.jp@gmail.com",
+    "url": "http://weblog.riywo.com"
+  },
+  "license": "MIT",
   "dependencies": {
     "express": "~3.3.4",
     "jade": "*",
