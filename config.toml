@@ -1,0 +1,3 @@
+base_url       = "http://google-page.dev"
+gmail_domain   = "gmail.com"
+session_secret = "secret string"

@@ -1,33 +1,31 @@
 express        = require "express"
 path           = require "path"
-nedb           = require("connect-nedb-session")(express)
 passport       = require "passport"
 GoogleStrategy = require("passport-google").Strategy
 
-googlePage = (options) ->
+googlePage = (dir, config) ->
+  throw new Error("dir is required") unless dir
+
   app = express()
 
   app.set "views", path.join(__dirname, "..", "views")
   app.set "view engine", "jade"
 
-  app.set "port",           process.env.PORT or 3000
-  app.set "schema",         if process.env.SECPAGE_SSL == "1" then "https" else "http"      
-  app.set "server",         process.env.SECPAGE_SERVER         or "google-page.dev"
-  app.set "gmail domain",   process.env.SECPAGE_GMAIL_DOMAIN   or "gmail.com"
-  app.set "session secret", process.env.SECPAGE_SESSION_SECRET or "secret string"
-  app.set "private dir",    process.env.SECPAGE_PRIVATE_DIR    or path.join(__dirname, "..", "private")
+  app.set "base_url",       config.base_url       or "http://google-page.dev"
+  app.set "gmail_domain",   config.gmail_domain   or "gmail.com"
+  app.set "session_secret", config.session_secret or "secret string"
 
   app.configure 'development', ->
     edt = require 'express-debug'
     edt app, { depth: 10 }
 
   passport.use(new GoogleStrategy {
-    returnURL: app.get("schema")+"://"+app.get("server")+"/auth/return"
-    realm: app.get("schema")+"://"+app.get("server")
+    returnURL: app.get("base_url")+"/auth/return"
+    realm:     app.get("base_url")
   }, (identifier, profile, done) ->
     process.nextTick ->
       profile.idnetifier = identifier
-      if profile.emails[0].value.match RegExp("@"+app.get("gmail domain")+"$")
+      if profile.emails[0].value.match RegExp("@"+app.get("gmail_domain")+"$")
         return done(null, profile)
       else
         return done(null, false, {message: "error"})
@@ -52,15 +50,12 @@ googlePage = (options) ->
   app.use express.methodOverride()
   app.use express.cookieParser()
   app.use express.session
-    secret: app.get("session secret")
-    key: "secpagesession"
-    store: new nedb
-      filename: path.join(__dirname, "..", app.get("env")+".nedb")
+    secret: app.get("session_secret")
   app.use express.csrf()
   app.use passport.initialize()
   app.use passport.session()
   app.use app.router
-  app.use express.static(__dirname + '/public')
+  app.use express.static(path.join(__dirname, "..", "public"))
   app.use express.errorHandler() if "development" is app.get("env")
 
   app.get "/", csrf, (req,res) ->
@@ -84,9 +79,10 @@ googlePage = (options) ->
     res.redirect '/'
 
   app.get /(^\/.+$)/, ensureAuthenticated, (req, res) ->
-    res.sendfile app.get("private dir") + req.params[0]
+    res.sendfile dir + req.params[0]
 
   return app
 
-exports.app = (options) ->
-  return new googlePage(options)
+exports.app = (dir, config) ->
+  config = config || {}
+  return new googlePage(dir, config)
