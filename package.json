@@ -1,17 +1,17 @@
 {
-  "name": "secpage",
-  "description": "Secure web page server",
+  "name": "google-page",
+  "description": "Authenticated web server with Google OpenID",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./bin/google-page"
   },
   "dependencies": {
     "express": "~3.3.4",
     "jade": "*",
     "passport": "~0.1.17",
     "passport-google": "~0.3.0",
-    "connect-nedb-session": "0.0.2"
+    "connect-nedb-session": "0.0.2",
+    "optimist": "~0.6.0"
   },
   "devDependencies": {
     "grunt-contrib-coffee": "~0.7.0",

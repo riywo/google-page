@@ -1,5 +1,4 @@
 express  = require "express"
-http     = require "http"
 path     = require "path"
 nedb     = require("connect-nedb-session")(express)
 
@@ -13,7 +12,7 @@ app.set "views", path.join(__dirname, "..", "views")
 app.set "view engine", "jade"
 
 app.set "schema",         if process.env.SECPAGE_SSL == "1" then "https" else "http"      
-app.set "server",         process.env.SECPAGE_SERVER         or "secpage.dev"
+app.set "server",         process.env.SECPAGE_SERVER         or "google-page.dev"
 app.set "gmail domain",   process.env.SECPAGE_GMAIL_DOMAIN   or "gmail.com"
 app.set "session secret", process.env.SECPAGE_SESSION_SECRET or "secret string"
 app.set "private dir",    process.env.SECPAGE_PRIVATE_DIR    or path.join(__dirname, "..", "private")
@@ -87,6 +86,4 @@ app.post '/logout', csrf, (req, res) ->
 app.get /(^\/.+$)/, ensureAuthenticated, (req, res) ->
   res.sendfile app.get("private dir") + req.params[0]
 
-http.createServer(app).listen app.get("port"), ->
-  console.log "Express server listening on port " + app.get("port")
-
+module.exports = app

@@ -5,11 +5,11 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     coffee:
-      app:
+      lib:
         expand: true
         cwd: 'src'
         src: ['**/*.coffee']
-        dest: 'app'
+        dest: 'lib'
         ext: '.js'
 
     exec:
