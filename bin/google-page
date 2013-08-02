@@ -1,5 +1,4 @@
 #!/usr/bin/env node
 
 var googlePageCLI = require("../lib/google-page-cli");
-var argv = require("optimist").argv;
-googlePageCLI.run(argv);
+googlePageCLI.run();

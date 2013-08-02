@@ -4,8 +4,23 @@ toml       = require "toml"
 http       = require "http"
 googlePage = require("./google-page")
 
-exports.run = (argv) ->
-  file   = argv.c or throw new Error("-c is required")
+exports.run = ->
+  argv = require("optimist")
+    .usage(
+      "Usage: google-page -c config.toml"
+    ).options("c",
+      alias:    "config"
+      describe: "Config file"
+      demand:   true
+    ).options("d",
+      alias:    "dir"
+      describe: "Data directory (default: current dir)"
+    ).options("p",
+      alias:    "port"
+      describe: "Port (default: $PORT or 3000)"
+    ).argv
+
+  file   = argv.c
   dir    = argv.d or process.cwd()
   port   = argv.p or process.env.PORT or 3000
 
@@ -13,4 +28,4 @@ exports.run = (argv) ->
   app    = googlePage.app(dir, config)
 
   http.createServer(app).listen port, ->
-    console.log "Express server listening on port " + port
+    console.log "GooglePage server listening on port " + port + ", serving " + dir
