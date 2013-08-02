@@ -1,11 +1,17 @@
 express        = require "express"
+fs             = require "fs"
 path           = require "path"
 passport       = require "passport"
 GoogleStrategy = require("passport-google").Strategy
 NedbStore      = require("connect-nedb-session")(express)
 
 googlePage = (dir, store, config) ->
-  throw new Error("dir is required") unless dir
+  throw new Error("Data dir('"+dir+"') doesn't exist") unless fs.existsSync(dir)
+  try
+    fs.openSync(store, "a")
+  catch error
+    throw new Error("Can't open store file('"+store+"'): "+error)
+  config = config || {}
 
   app = express()
 
@@ -88,5 +94,4 @@ googlePage = (dir, store, config) ->
   return app
 
 exports.app = (dir, store, config) ->
-  config = config || {}
   return new googlePage(dir, store, config)
