@@ -1,5 +1,7 @@
-http = require "http"
-app  = require "./google-page"
+http       = require "http"
+googlePage = require("./google-page")
+
+app = googlePage.app()
 
 exports.run = (argv) ->
   http.createServer(app).listen app.get("port"), ->
