@@ -5,7 +5,7 @@ http       = require "http"
 googlePage = require("./google-page")
 
 exports.run = ->
-  argv = require("optimist")
+  optimist = require("optimist")
     .usage(
       "Usage: google-page -c config.toml"
     ).options("c",
@@ -21,7 +21,16 @@ exports.run = ->
     ).options("s",
       alias:    "session"
       describe: "Session store  (default: dir/.google-page.nedb)"
-    ).argv
+    ).options("h",
+      alias:    "help"
+      describe: "Show help"
+    )
+
+  argv = optimist.argv
+
+  if argv.h
+    optimist.showHelp()
+    process.exit 0
 
   file   = argv.c
   dir    = argv.d or process.cwd()
