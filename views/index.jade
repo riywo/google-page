@@ -1,10 +1,11 @@
 extends layout
 
 block content
-  h1 Welcome to #{title}
+  h2 Welcome to #{base_url}
   if is_auth
-    form(action="/logout", method="post", class="pure-form")
+    h3 You are #{email}
+    form(action="/logout", method="post")
       input(type="hidden", name="_csrf", value=token)
-      button(type="submit", class="pure-button") Logout
+      button(type="submit") Logout
   else
-    a(href="/login", class="pure-button pure-button-primary") Login
+    a(href="/login") Login

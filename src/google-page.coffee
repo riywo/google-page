@@ -36,7 +36,7 @@ googlePage = (dir, store, config) ->
       if profile.emails[0].value.match RegExp("@"+app.get("gmail_domain")+"$")
         return done(null, profile)
       else
-        return done(null, false, {message: "error"})
+        return done(null, false)
   )
   passport.serializeUser (user, done) ->
     done(null, user)
@@ -46,7 +46,7 @@ googlePage = (dir, store, config) ->
   ensureAuthenticated = (req, res, next) ->
     return next() if req.isAuthenticated()
     req.session.request_path = req.path
-    res.redirect '/login'
+    res.redirect "/login"
 
   csrf = (req, res, next) ->
     res.locals.token = req.session._csrf
@@ -68,28 +68,32 @@ googlePage = (dir, store, config) ->
   app.use passport.initialize()
   app.use passport.session()
   app.use app.router
-  app.use express.static(path.join(__dirname, "..", "public"))
 
   app.get "/", csrf, (req,res) ->
     res.render "index",
-      title: "Express"
-      is_auth: req.isAuthenticated()
+      base_url: app.get("base_url")
+      is_auth:  req.isAuthenticated()
+      email:    req.session.passport.user.emails[0].value if req.isAuthenticated()
 
   app.get "/login", passport.authenticate('google'), (req, res) ->
-    res.redirect '/'
+    res.redirect "/"
 
-  app.get "/auth/return", passport.authenticate('google'), (req, res) ->
+  app.get "/auth/return", passport.authenticate('google', { failureRedirect: "/error" }), (req, res) ->
     path = "/"
     if req.session.request_path
       path = req.session.request_path
       delete req.session.request_path
     res.redirect path
 
-  app.post '/logout', csrf, (req, res) ->
+  app.post "/logout", csrf, (req, res) ->
     req.logout()
-    res.redirect '/'
+    res.redirect "/"
 
-  app.get '*', ensureAuthenticated, (req, res, next) ->
+  app.get "/error", (req, res) ->
+    res.status 500
+    res.send "Error"
+
+  app.get "*", ensureAuthenticated, (req, res, next) ->
     privateStatic(req, res, next)
 
   return app
