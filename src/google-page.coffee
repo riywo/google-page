@@ -52,6 +52,8 @@ googlePage = (dir, store, config) ->
     res.locals.token = req.session._csrf
     next()
 
+  privateStatic = express.static(dir)
+
   app.use express.favicon()
   app.use express.logger("dev")
   app.use express.bodyParser()
@@ -87,8 +89,8 @@ googlePage = (dir, store, config) ->
     req.logout()
     res.redirect '/'
 
-  app.get /(^\/.+$)/, ensureAuthenticated, (req, res) ->
-    res.sendfile path.join(dir, req.params[0])
+  app.get '*', ensureAuthenticated, (req, res, next) ->
+    privateStatic(req, res, next)
 
   return app
 
