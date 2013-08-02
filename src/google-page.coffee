@@ -25,7 +25,6 @@ googlePage = (dir, store, config) ->
   app.configure 'development', ->
     edt = require 'express-debug'
     edt app, { depth: 10 }
-    app.use express.errorHandler()
 
   passport.use(new GoogleStrategy {
     returnURL: app.get("base_url")+"/auth/return"
@@ -54,6 +53,10 @@ googlePage = (dir, store, config) ->
 
   privateStatic = express.static(dir)
 
+  errorHandling = (err, req, res, next) ->
+    console.log "Error[" + req.url + "]: " + err
+    res.redirect "/error"
+
   app.use express.favicon()
   app.use express.logger("dev")
   app.use express.bodyParser()
@@ -68,6 +71,7 @@ googlePage = (dir, store, config) ->
   app.use passport.initialize()
   app.use passport.session()
   app.use app.router
+  app.use errorHandling
 
   app.get "/", csrf, (req,res) ->
     res.render "index",
