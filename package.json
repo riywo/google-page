@@ -14,7 +14,8 @@
     "passport": "~0.1.17",
     "passport-google": "~0.3.0",
     "optimist": "~0.6.0",
-    "toml": "~0.4.1"
+    "toml": "~0.4.1",
+    "connect-nedb-session": "0.0.2"
   },
   "devDependencies": {
     "grunt-contrib-coffee": "~0.7.0",

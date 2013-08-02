@@ -2,8 +2,9 @@ express        = require "express"
 path           = require "path"
 passport       = require "passport"
 GoogleStrategy = require("passport-google").Strategy
+NedbStore      = require("connect-nedb-session")(express)
 
-googlePage = (dir, config) ->
+googlePage = (dir, store, config) ->
   throw new Error("dir is required") unless dir
 
   app = express()
@@ -51,6 +52,9 @@ googlePage = (dir, config) ->
   app.use express.cookieParser()
   app.use express.session
     secret: app.get("session_secret")
+    store:
+      new NedbStore
+        filename: store
   app.use express.csrf()
   app.use passport.initialize()
   app.use passport.session()
@@ -83,6 +87,6 @@ googlePage = (dir, config) ->
 
   return app
 
-exports.app = (dir, config) ->
+exports.app = (dir, store, config) ->
   config = config || {}
-  return new googlePage(dir, config)
+  return new googlePage(dir, store, config)
