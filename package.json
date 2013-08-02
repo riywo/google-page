@@ -8,13 +8,17 @@
   },
   "dependencies": {
     "express": "~3.3.4",
-    "jade": "*"
+    "jade": "*",
+    "passport": "~0.1.17",
+    "passport-google": "~0.3.0",
+    "connect-nedb-session": "0.0.2"
   },
   "devDependencies": {
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-cli": "~0.1.9",
     "grunt-contrib-watch": "~0.5.1",
     "grunt": "~0.4.1",
-    "grunt-exec": "~0.4.2"
+    "grunt-exec": "~0.4.2",
+    "express-debug": "~1.0.3"
   }
 }

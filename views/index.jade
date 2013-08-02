@@ -1,5 +1,10 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 Welcome to #{title}
+  if is_auth
+    form(action="/logout", method="post", class="pure-form")
+      input(type="hidden", name="_csrf", value=token)
+      button(type="submit", class="pure-button") Logout
+  else
+    a(href="/login", class="pure-button pure-button-primary") Login
